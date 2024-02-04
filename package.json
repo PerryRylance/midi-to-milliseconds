@@ -1,0 +1,18 @@
+{
+	"scripts": {
+		"prepack": "tsc",
+		"dev": "npx tsc --watch",
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@babel/preset-env": "^7.23.9",
+		"@babel/preset-typescript": "^7.23.3",
+		"@types/jest": "^29.5.12",
+		"jest": "^29.7.0",
+		"typescript": "^5.3.3",
+		"wavefile": "^11.0.0"
+	},
+	"dependencies": {
+		"@perry-rylance/midi": "^1.0.4"
+	}
+}
