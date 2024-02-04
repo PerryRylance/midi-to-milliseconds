@@ -22,7 +22,9 @@ export default class TimeResolvedTrack
 
 	injectResolvedSetTempoEvents(events: TimeResolvedEvent<SetTempoEvent>[]): void
 	{
-		this.events.push(...events);
+		// NB: Important to unshift these so that the set tempo events come first
+		this.events.unshift(...events);
+
 		// TODO: Could speed this up with an insertion sort or something more specific than JS's native sort
 		this.events.sort((a, b) => {
 

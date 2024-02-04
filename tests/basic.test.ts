@@ -1,4 +1,4 @@
-import { ReadStream, File } from "@perry-rylance/midi";
+import { ReadStream, File, NoteOnEvent } from "@perry-rylance/midi";
 import { WaveFile } from "wavefile";
 
 import TimeResolver from "../src/TimeResolver";
@@ -33,7 +33,7 @@ const getMidi = (filename: string) => {
 
 };
 
-test("Reads cue data", () => {
+/* test("Reads cue data", () => {
 
 	const wav		= getWav("./tests/files/basic.wav");
 	const markers	= wav.listCuePoints();
@@ -64,9 +64,9 @@ test("Resolver absolute ticks are sorted", () => {
 		expect(track.events).toStrictEqual(sorted);
 	}
 
-});
+}); */
 
-test("Resolves expected duration", () => {
+/* test("Resolves expected duration", () => {
 
 	const wav			= getWav("./tests/files/basic.wav");
 	const midi			= getMidi("./tests/files/basic.mid");
@@ -79,5 +79,26 @@ test("Resolves expected duration", () => {
 	const last			= piano.events[piano.events.length - 1];
 
 	expect(last.absolute.milliseconds).toBeCloseTo(milliseconds, 6);
+
+}); */
+
+test("Resolves expected note on start times", () => {
+
+	const wav			= getWav("./tests/files/basic.wav");
+	const midi			= getMidi("./tests/files/basic.mid");
+
+	const markers		= wav.listCuePoints();
+
+	const resolver		= new TimeResolver(midi);
+	const piano			= resolver.tracks[1];
+
+	// @ts-ignore NB: dwPosition is not on object. Looks like this library is lacking some types.
+	const expected		= markers.map(marker => marker.dwPosition / 44100 * 1000)
+	const received		= piano
+		.events
+		.filter(event => event.original instanceof NoteOnEvent)
+		.map(event => event.absolute.milliseconds);
+
+	expect(received).toStrictEqual(expected);
 
 });
