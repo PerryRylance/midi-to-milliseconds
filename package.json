@@ -1,4 +1,21 @@
 {
+	"name": "@perry-rylance/midi-to-milliseconds",
+	"author": "Perry Rylance",
+	"license": "MIT",
+	"description": "TypeScript library for resolving MIDI event times to milliseconds. Useful for syncing things like graphics to MIDI.",
+	"private": false,
+	"keywords": [
+		"MIDI",
+		"TypeScript",
+		"Milliseconds",
+		"Timing",
+		"Sync"
+	],
+	"version": "1.0.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/PerryRylance/midi-to-milliseconds.git"
+	  },
 	"scripts": {
 		"prepack": "tsc",
 		"dev": "npx tsc --watch",
@@ -13,6 +30,6 @@
 		"wavefile": "^11.0.0"
 	},
 	"dependencies": {
-		"@perry-rylance/midi": "^1.0.4"
+		"@perry-rylance/midi": "^1.0.5"
 	}
 }
