@@ -15,7 +15,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/PerryRylance/midi-to-milliseconds.git"
-	  },
+	},
 	"scripts": {
 		"prepack": "tsc",
 		"dev": "npx tsc --watch",
@@ -30,6 +30,7 @@
 		"wavefile": "^11.0.0"
 	},
 	"dependencies": {
-		"@perry-rylance/midi": "^1.0.5"
+		"@perry-rylance/midi": "^1.0.5",
+		"d3-binarytree": "^1.0.2"
 	}
 }

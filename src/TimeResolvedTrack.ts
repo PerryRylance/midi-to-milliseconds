@@ -1,9 +1,15 @@
-import { Event, Track, SetTempoEvent } from "@perry-rylance/midi";
-import TimeResolvedEvent from "./TimeResolvedEvent";
+import { Event, Track } from "@perry-rylance/midi";
+import TimeResolvedEvent, { AbsoluteTime } from "./TimeResolvedEvent";
+import InjectedSetTempoEvent from "./InjectedSetTempoEvent";
+// @ts-ignore
+import d3 from "../node_modules/d3-binarytree/dist/d3-binarytree";
 
 export default class TimeResolvedTrack
 {
-	events: TimeResolvedEvent<Event>[];
+	events: TimeResolvedEvent[];
+
+	private millisecondsBinaryTree: any;
+	private ticksBinaryTree: any;
 
 	constructor(track: Track)
 	{
@@ -20,22 +26,69 @@ export default class TimeResolvedTrack
 		});
 	}
 
-	injectResolvedSetTempoEvents(events: TimeResolvedEvent<SetTempoEvent>[]): void
+	private getEventsBetween(start: number, end: number, key: keyof AbsoluteTime): TimeResolvedEvent[]
 	{
-		// NB: Important to unshift these so that the set tempo events come first
-		this.events.unshift(...events);
+		if(this.events.length === 0)
+			return [];
 
-		// TODO: Could speed this up with an insertion sort or something more specific than JS's native sort
-		this.events.sort((a, b) => {
+		const results: TimeResolvedEvent[] = [];
 
-			if(a.absolute.ticks === b.absolute.ticks)
-				return 0;
+		let tree: any = null;
 
-			if(a.absolute.ticks > b.absolute.ticks)
-				return 1;
+		switch(key)
+		{
+			case "milliseconds":
 
-			return -1;
+				if(!this.millisecondsBinaryTree)
+					this.millisecondsBinaryTree = d3.binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.milliseconds);
 
+				tree = this.millisecondsBinaryTree;
+
+				break;
+			
+			case "ticks":
+
+				if(!this.ticksBinaryTree)
+					this.ticksBinaryTree = d3.binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.ticks);
+
+				tree = this.ticksBinaryTree;
+				
+				break;
+
+			default:
+				throw new Error("Invalid key");
+		}
+
+		tree.visit((node: any, x1: number, x2: number) => {
+			if(!node.length) {
+				do{
+					const d = node.data;
+					const x = tree.x()(d);
+
+					if(x >= start && x < end)
+						results.push(d);
+				
+				}while(node = node.next);
+			}
+
+			return x1 >= end || x2 < start;
 		});
+
+		return this.stripInjectedSetTempoEvents(results);
+	}
+
+	private stripInjectedSetTempoEvents(events: TimeResolvedEvent[]): TimeResolvedEvent[]
+	{
+		return events.filter(event => !(event.original instanceof InjectedSetTempoEvent));
+	}
+
+	getEventsBetweenTicks(start: number, end: number): TimeResolvedEvent[]
+	{
+		return this.getEventsBetween(start, end, "ticks");
+	}
+
+	getEventsBetweenMilliseconds(start: number, end: number): TimeResolvedEvent[]
+	{
+		return this.getEventsBetween(start, end, "milliseconds");
 	}
 }
