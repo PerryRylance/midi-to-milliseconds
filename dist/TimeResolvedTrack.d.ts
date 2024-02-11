@@ -1,7 +1,12 @@
-import { Event, Track, SetTempoEvent } from "@perry-rylance/midi";
+import { Track } from "@perry-rylance/midi";
 import TimeResolvedEvent from "./TimeResolvedEvent";
 export default class TimeResolvedTrack {
-    events: TimeResolvedEvent<Event>[];
+    events: TimeResolvedEvent[];
+    private millisecondsBinaryTree;
+    private ticksBinaryTree;
     constructor(track: Track);
-    injectResolvedSetTempoEvents(events: TimeResolvedEvent<SetTempoEvent>[]): void;
+    private getEventsBetween;
+    private stripInjectedSetTempoEvents;
+    getEventsBetweenTicks(start: number, end: number): TimeResolvedEvent[];
+    getEventsBetweenMilliseconds(start: number, end: number): TimeResolvedEvent[];
 }

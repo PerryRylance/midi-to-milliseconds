@@ -1,11 +1,10 @@
 import { Event } from "@perry-rylance/midi";
-type AbsoluteTime = {
+export type AbsoluteTime = {
     ticks: number;
     milliseconds?: number;
 };
-export default class TimeResolvedEvent<T extends Event> {
-    original: T;
+export default class TimeResolvedEvent {
+    original: Event;
     absolute: AbsoluteTime;
-    constructor(event: T, absolute?: AbsoluteTime);
+    constructor(event: Event, absolute?: AbsoluteTime);
 }
-export {};

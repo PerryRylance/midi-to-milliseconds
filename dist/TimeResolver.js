@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const midi_1 = require("@perry-rylance/midi");
 const TimeResolvedTrack_1 = __importDefault(require("./TimeResolvedTrack"));
+const TimeResolvedEvent_1 = __importDefault(require("./TimeResolvedEvent"));
+const InjectedSetTempoEvent_1 = __importDefault(require("./InjectedSetTempoEvent"));
 class TimeResolver {
     constructor(file) {
         if (file.resolution.units !== midi_1.ResolutionUnits.PPQ)
@@ -18,7 +20,7 @@ class TimeResolver {
             .flat();
         // NB: Inject the tempo events into each track
         for (const track of this.tracks)
-            track.injectResolvedSetTempoEvents(resolvedSetTempoEvents);
+            this.injectResolvedSetTempoEvents(track, resolvedSetTempoEvents);
         // NB: Walk the events for each track resolving time
         const ppqn = file.resolution.ticksPerQuarterNote;
         let trackIndex = 0;
@@ -30,13 +32,31 @@ class TimeResolver {
                 // NB: Deltas won't work here because we've injected set tempos. Need to track our own delta from absolute times.
                 const delta = event.absolute.ticks - (prev ? prev.absolute.ticks : 0);
                 milliseconds += delta * 60000 / ppqn / bpm;
-                event.absolute.milliseconds = milliseconds;
+                // NB: Round down to avoid floating-point comparison issues. Milliseconds is accurate enough for the purposes of this library.
+                event.absolute.milliseconds = Math.floor(milliseconds);
                 if (event.original instanceof midi_1.SetTempoEvent)
                     bpm = event.original.bpm;
                 prev = event;
             }
             trackIndex++;
         }
+    }
+    injectResolvedSetTempoEvents(track, events) {
+        const cloned = events.map(event => {
+            const cloned = new InjectedSetTempoEvent_1.default(event.original.delta);
+            cloned.bpm = event.original.bpm;
+            return new TimeResolvedEvent_1.default(cloned, event.absolute);
+        });
+        // NB: Important to unshift these so that the set tempo events come first
+        track.events.unshift(...cloned);
+        // TODO: Could speed this up with an insertion sort or something more specific than JS's native sort
+        track.events.sort((a, b) => {
+            if (a.absolute.ticks === b.absolute.ticks)
+                return 0;
+            if (a.absolute.ticks > b.absolute.ticks)
+                return 1;
+            return -1;
+        });
     }
 }
 exports.default = TimeResolver;

@@ -3,4 +3,5 @@ import TimeResolvedTrack from "./TimeResolvedTrack";
 export default class TimeResolver {
     readonly tracks: TimeResolvedTrack[];
     constructor(file: File);
+    private injectResolvedSetTempoEvents;
 }

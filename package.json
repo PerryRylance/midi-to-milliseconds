@@ -4,6 +4,9 @@
 	"license": "MIT",
 	"description": "TypeScript library for resolving MIDI event times to milliseconds. Useful for syncing things like graphics to MIDI.",
 	"private": false,
+	"publishConfig": {
+		"access": "public"
+	},
 	"keywords": [
 		"MIDI",
 		"TypeScript",
