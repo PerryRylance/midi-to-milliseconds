@@ -33,6 +33,9 @@ export default class TimeResolvedTrack
 
 		const results: TimeResolvedEvent[] = [];
 
+		start = Math.floor(start);
+		end = Math.floor(end);
+
 		let tree: any = null;
 
 		switch(key)

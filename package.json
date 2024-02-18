@@ -16,7 +16,7 @@
 		"Timing",
 		"Sync"
 	],
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/PerryRylance/midi-to-milliseconds.git"
