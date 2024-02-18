@@ -2,7 +2,7 @@ import { Event, Track } from "@perry-rylance/midi";
 import TimeResolvedEvent, { AbsoluteTime } from "./TimeResolvedEvent";
 import InjectedSetTempoEvent from "./InjectedSetTempoEvent";
 // @ts-ignore
-import d3 from "../node_modules/d3-binarytree/dist/d3-binarytree";
+import binarytree from "../lib/d3-binarytree/binarytree";
 
 export default class TimeResolvedTrack
 {
@@ -40,7 +40,7 @@ export default class TimeResolvedTrack
 			case "milliseconds":
 
 				if(!this.millisecondsBinaryTree)
-					this.millisecondsBinaryTree = d3.binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.milliseconds);
+					this.millisecondsBinaryTree = binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.milliseconds);
 
 				tree = this.millisecondsBinaryTree;
 
@@ -49,7 +49,7 @@ export default class TimeResolvedTrack
 			case "ticks":
 
 				if(!this.ticksBinaryTree)
-					this.ticksBinaryTree = d3.binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.ticks);
+					this.ticksBinaryTree = binarytree(this.events, (node: TimeResolvedEvent) => node.absolute.ticks);
 
 				tree = this.ticksBinaryTree;
 				

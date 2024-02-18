@@ -8,7 +8,7 @@
 		"access": "public"
 	},
 	"main": "dist/index.js",
-  	"types": "dist/index.d.ts",
+	"types": "dist/index.d.ts",
 	"keywords": [
 		"MIDI",
 		"TypeScript",
@@ -16,7 +16,7 @@
 		"Timing",
 		"Sync"
 	],
-	"version": "1.0.1",
+	"version": "1.0.4",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/PerryRylance/midi-to-milliseconds.git"
@@ -35,7 +35,6 @@
 		"wavefile": "^11.0.0"
 	},
 	"dependencies": {
-		"@perry-rylance/midi": "^1.0.5",
-		"d3-binarytree": "^1.0.2"
+		"@perry-rylance/midi": "^1.0.5"
 	}
 }

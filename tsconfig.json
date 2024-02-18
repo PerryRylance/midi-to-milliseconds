@@ -1,6 +1,7 @@
 {
 	"include": [
-		"./src/**/*.ts"
+		"./src/**/*.ts", 
+		"lib/d3-binarytree/d3-binarytree.d.ts"
 	],
 	"compilerOptions": {
 		/* Visit https://aka.ms/tsconfig to read more about this file */

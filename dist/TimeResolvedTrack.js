@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const TimeResolvedEvent_1 = __importDefault(require("./TimeResolvedEvent"));
 const InjectedSetTempoEvent_1 = __importDefault(require("./InjectedSetTempoEvent"));
 // @ts-ignore
-const d3_binarytree_1 = __importDefault(require("../node_modules/d3-binarytree/dist/d3-binarytree"));
+const binarytree_1 = __importDefault(require("../lib/d3-binarytree/binarytree"));
 class TimeResolvedTrack {
     constructor(track) {
         let ticks = 0;
@@ -25,12 +25,12 @@ class TimeResolvedTrack {
         switch (key) {
             case "milliseconds":
                 if (!this.millisecondsBinaryTree)
-                    this.millisecondsBinaryTree = d3_binarytree_1.default.binarytree(this.events, (node) => node.absolute.milliseconds);
+                    this.millisecondsBinaryTree = (0, binarytree_1.default)(this.events, (node) => node.absolute.milliseconds);
                 tree = this.millisecondsBinaryTree;
                 break;
             case "ticks":
                 if (!this.ticksBinaryTree)
-                    this.ticksBinaryTree = d3_binarytree_1.default.binarytree(this.events, (node) => node.absolute.ticks);
+                    this.ticksBinaryTree = (0, binarytree_1.default)(this.events, (node) => node.absolute.ticks);
                 tree = this.ticksBinaryTree;
                 break;
             default:
