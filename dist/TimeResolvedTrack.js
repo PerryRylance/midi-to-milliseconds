@@ -21,6 +21,8 @@ class TimeResolvedTrack {
         if (this.events.length === 0)
             return [];
         const results = [];
+        start = Math.floor(start);
+        end = Math.floor(end);
         let tree = null;
         switch (key) {
             case "milliseconds":
