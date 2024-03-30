@@ -65,6 +65,21 @@ test("Resolver absolute ticks are sorted", () => {
 
 });
 
+test("Resolver events in same order using stable mode", () => {
+
+	const midi		= getMidi("./tests/files/fantasy-impromptu-with-bar-markers.mid");
+	const resolver	= new TimeResolver(midi, {stable: true});
+
+	for(let i = 0; i < midi.tracks.length; i++)
+	{
+		const original = midi.tracks[i].events;
+		const resolved = resolver.tracks[i].getEventsBetweenMilliseconds(0, Infinity).map(wrapped => wrapped.original);
+
+		expect(resolved).toStrictEqual(original);
+	}
+
+});
+
 test("Resolves expected duration", () => {
 
 	const wav			= getWav("./tests/files/fantasy-impromptu-with-bar-markers.wav");

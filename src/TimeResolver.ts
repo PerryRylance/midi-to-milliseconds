@@ -3,17 +3,25 @@ import TimeResolvedTrack from "./TimeResolvedTrack";
 import TimeResolvedEvent from "./TimeResolvedEvent";
 import InjectedSetTempoEvent from "./InjectedSetTempoEvent";
 
+export interface TimeResolverOptions
+{
+	stable?: boolean;
+}
+
 export default class TimeResolver
 {
+	private options?: TimeResolverOptions;
 	readonly tracks: TimeResolvedTrack[];
 
-	constructor(file: File)
+	constructor(file: File, options?: TimeResolverOptions)
 	{
 		if(file.resolution.units !== ResolutionUnits.PPQ)
 			throw new Error("Only PPQ resolution is supported presently");
 
+		this.options = options;
+
 		// NB: Get absolute ticks for all events
-		this.tracks = file.tracks.map(track => new TimeResolvedTrack(track));
+		this.tracks = file.tracks.map(track => new TimeResolvedTrack(track, options));
 
 		// NB: Get resolved tempo events from all tracks
 		const resolvedSetTempoEvents: TimeResolvedEvent[] = this.tracks.map(track => {
@@ -25,7 +33,12 @@ export default class TimeResolver
 		
 		// NB: Inject the tempo events into each track
 		for(const track of this.tracks)
+		{
 			this.injectResolvedSetTempoEvents(track, resolvedSetTempoEvents);
+
+			if(this.options?.stable)
+				this.indexEvents(track);
+		}
 
 		// NB: Walk the events for each track resolving time
 		const ppqn = file.resolution.ticksPerQuarterNote;
@@ -85,5 +98,11 @@ export default class TimeResolver
 			return -1;
 
 		});
+	}
+
+	private indexEvents(track: TimeResolvedTrack): void
+	{
+		for(let i = 0; i < track.events.length; i++)
+			track.events[i].index = i;
 	}
 }

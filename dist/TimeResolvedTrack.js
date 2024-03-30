@@ -8,8 +8,9 @@ const InjectedSetTempoEvent_1 = __importDefault(require("./InjectedSetTempoEvent
 // @ts-ignore
 const binarytree_1 = __importDefault(require("../lib/d3-binarytree/binarytree"));
 class TimeResolvedTrack {
-    constructor(track) {
+    constructor(track, options) {
         let ticks = 0;
+        this.options = options;
         this.events = track.events.map(event => {
             ticks += event.delta;
             return new TimeResolvedEvent_1.default(event, {
@@ -18,6 +19,7 @@ class TimeResolvedTrack {
         });
     }
     getEventsBetween(start, end, key) {
+        var _a;
         if (this.events.length === 0)
             return [];
         const results = [];
@@ -49,7 +51,10 @@ class TimeResolvedTrack {
             }
             return x1 >= end || x2 < start;
         });
-        return this.stripInjectedSetTempoEvents(results);
+        const result = this.stripInjectedSetTempoEvents(results);
+        if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.stable)
+            result.sort((a, b) => a.index - b.index);
+        return result;
     }
     stripInjectedSetTempoEvents(events) {
         return events.filter(event => !(event.original instanceof InjectedSetTempoEvent_1.default));

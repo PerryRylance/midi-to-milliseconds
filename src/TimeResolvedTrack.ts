@@ -3,6 +3,7 @@ import TimeResolvedEvent, { AbsoluteTime } from "./TimeResolvedEvent";
 import InjectedSetTempoEvent from "./InjectedSetTempoEvent";
 // @ts-ignore
 import binarytree from "../lib/d3-binarytree/binarytree";
+import { TimeResolverOptions } from "./TimeResolver";
 
 export default class TimeResolvedTrack
 {
@@ -11,9 +12,13 @@ export default class TimeResolvedTrack
 	private millisecondsBinaryTree: any;
 	private ticksBinaryTree: any;
 
-	constructor(track: Track)
+	private options?: TimeResolverOptions;
+
+	constructor(track: Track, options?: TimeResolverOptions)
 	{
 		let ticks = 0;
+
+		this.options = options;
 
 		this.events = track.events.map(event => {
 
@@ -77,7 +82,12 @@ export default class TimeResolvedTrack
 			return x1 >= end || x2 < start;
 		});
 
-		return this.stripInjectedSetTempoEvents(results);
+		const result = this.stripInjectedSetTempoEvents(results);
+
+		if(this.options?.stable)
+			result.sort((a, b) => a.index! - b.index!);
+
+		return result;
 	}
 
 	private stripInjectedSetTempoEvents(events: TimeResolvedEvent[]): TimeResolvedEvent[]

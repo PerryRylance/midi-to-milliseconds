@@ -7,6 +7,7 @@ export type AbsoluteTime = {
 
 export default class TimeResolvedEvent
 {
+	index?: number;
 	original: Event;
 	absolute: AbsoluteTime;
 

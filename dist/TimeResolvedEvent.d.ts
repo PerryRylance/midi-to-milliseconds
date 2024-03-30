@@ -4,6 +4,7 @@ export type AbsoluteTime = {
     milliseconds?: number;
 };
 export default class TimeResolvedEvent {
+    index?: number;
     original: Event;
     absolute: AbsoluteTime;
     constructor(event: Event, absolute?: AbsoluteTime);

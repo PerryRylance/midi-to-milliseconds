@@ -8,19 +8,24 @@ const TimeResolvedTrack_1 = __importDefault(require("./TimeResolvedTrack"));
 const TimeResolvedEvent_1 = __importDefault(require("./TimeResolvedEvent"));
 const InjectedSetTempoEvent_1 = __importDefault(require("./InjectedSetTempoEvent"));
 class TimeResolver {
-    constructor(file) {
+    constructor(file, options) {
+        var _a;
         if (file.resolution.units !== midi_1.ResolutionUnits.PPQ)
             throw new Error("Only PPQ resolution is supported presently");
+        this.options = options;
         // NB: Get absolute ticks for all events
-        this.tracks = file.tracks.map(track => new TimeResolvedTrack_1.default(track));
+        this.tracks = file.tracks.map(track => new TimeResolvedTrack_1.default(track, options));
         // NB: Get resolved tempo events from all tracks
         const resolvedSetTempoEvents = this.tracks.map(track => {
             return track.events.filter(event => event.original instanceof midi_1.SetTempoEvent);
         })
             .flat();
         // NB: Inject the tempo events into each track
-        for (const track of this.tracks)
+        for (const track of this.tracks) {
             this.injectResolvedSetTempoEvents(track, resolvedSetTempoEvents);
+            if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.stable)
+                this.indexEvents(track);
+        }
         // NB: Walk the events for each track resolving time
         const ppqn = file.resolution.ticksPerQuarterNote;
         let trackIndex = 0;
@@ -57,6 +62,10 @@ class TimeResolver {
                 return 1;
             return -1;
         });
+    }
+    indexEvents(track) {
+        for (let i = 0; i < track.events.length; i++)
+            track.events[i].index = i;
     }
 }
 exports.default = TimeResolver;
